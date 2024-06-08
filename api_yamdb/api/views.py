@@ -3,8 +3,8 @@ from rest_framework.filters import SearchFilter
 
 from reviews.models import Category, Genre, Title
 
-from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 from .mixins import GetCreateDeleteMixin
+from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 
 
 class CategoryViewSet(GetCreateDeleteMixin):

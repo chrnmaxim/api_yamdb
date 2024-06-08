@@ -1,6 +1,5 @@
 from django.db import models
 
-
 CHARS_LIMIT: int = 30
 MAX_LENGTH: int = 256
 
