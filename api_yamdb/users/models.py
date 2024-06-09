@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import RegexValidator
 
-from api_yamdb.settings import LENGTH_TEXT
+from api_yamdb.settings import LENGTH_TEXT, LENGTH_TEXT, LIMIT_EMAIL
 
 
 class User(AbstractUser):
@@ -17,8 +17,8 @@ class User(AbstractUser):
         (ADMIN, "Администратор"),
     )
     username = models.CharField(
-        verbose_name="Имя пользователя",
-        max_length=150,
+        "Имя пользователя",
+        max_length=LENGTH_TEXT,
         unique=True,
         validators=[RegexValidator(
             regex=r"^[\w.@+-]+$",
@@ -29,28 +29,28 @@ class User(AbstractUser):
         },
     )
     email = models.EmailField(
-        verbose_name="email",
-        max_length=254,
+        "email",
+        max_length=LIMIT_EMAIL,
         unique=True
     )
     role = models.CharField(
-        verbose_name="Роль",
+        "Роль",
         max_length=max(len(role) for role, _ in ROLE_CHOICES),
         choices=ROLE_CHOICES,
         default=USER,
     )
     bio = models.TextField(
-        verbose_name="Биография",
+        "Биография",
         blank=True
     )
     first_name = models.CharField(
-        verbose_name="Имя",
-        max_length=150,
+        "Имя",
+        max_length=LENGTH_TEXT,
         blank=True
     )
     last_name = models.CharField(
-        verbose_name="Фамилия",
-        max_length=150,
+        "Фамилия",
+        max_length=LENGTH_TEXT,
         blank=True
     )
 
