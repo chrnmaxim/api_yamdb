@@ -6,6 +6,8 @@ from django.db import IntegrityError
 
 from reviews.models import Category, Genre, Title
 
+from api_yamdb.settings import CSV_DIR
+
 
 MODELS: dict = {
     Category: 'category.csv',
@@ -28,7 +30,7 @@ class Command(BaseCommand):
         try:
             for model, file in MODELS.items():
                 with open(
-                    f'{settings.BASE_DIR}/static/data/{file}',
+                    f'{CSV_DIR}{file}',
                     encoding='utf-8'
                 ) as f:
                     reader = csv.DictReader(f)
