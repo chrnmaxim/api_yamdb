@@ -1,13 +1,10 @@
 import csv
 
-from django.conf import settings
 from django.core.management import BaseCommand
 from django.db import IntegrityError
 
-from reviews.models import Category, Genre, Title
-
 from api_yamdb.settings import CSV_DIR
-
+from reviews.models import Category, Genre, Title
 
 MODELS: dict = {
     Category: 'category.csv',
