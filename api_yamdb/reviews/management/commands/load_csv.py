@@ -5,11 +5,13 @@ from django.db import IntegrityError
 
 from api_yamdb.settings import CSV_DIR
 from reviews.models import Category, Genre, Title
+from users.models import User
 
 MODELS: dict = {
     Category: 'category.csv',
     Genre: 'genre.csv',
     Title: 'titles.csv',
+    User: 'users.csv'
 }
 
 
