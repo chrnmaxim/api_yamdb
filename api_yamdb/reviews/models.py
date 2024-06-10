@@ -1,7 +1,6 @@
 from django.db import models
 
-CHARS_LIMIT: int = 30
-MAX_LENGTH: int = 256
+from api_yamdb.settings import CHARS_LIMIT, MAX_LENGTH
 
 
 class Category(models.Model):

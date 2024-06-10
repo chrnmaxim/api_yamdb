@@ -1,7 +1,10 @@
 from rest_framework import serializers
 
+
+from api_yamdb.settings import MAX_LENGTH
 from reviews.models import Category, Genre, Title
 from users.models import User
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -77,11 +80,11 @@ class UserRecieveTokenSerializer(serializers.Serializer):
 
     username = serializers.RegexField(
         regex=r'^[\w.@+-]+$',
-        max_length=150,
+        max_length=MAX_LENGTH,
         required=True
     )
     confirmation_code = serializers.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH,
         required=True
     )
 

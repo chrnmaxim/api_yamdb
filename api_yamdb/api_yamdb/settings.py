@@ -136,10 +136,10 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
-LENGTH_TEXT = 15
+CHARS_LIMIT: int = 30
 
-LENGTH_TEXT = 150
+MAX_LENGTH: int = 256
 
-LIMIT_EMAIL = 254
+LIMIT_EMAIL: int = 254
 
 EMAIL_YAMDB = 'registration_YaMDb@mail.com'
