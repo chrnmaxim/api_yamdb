@@ -2,8 +2,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import get_user_model
 from django.db import models
 
-CHARS_LIMIT: int = 30
-MAX_LENGTH: int = 256
+from api_yamdb.settings import CHARS_LIMIT, MAX_LENGTH
 
 User = get_user_model()  # Временная замена кастомного класса User
 
