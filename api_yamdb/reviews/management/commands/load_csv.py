@@ -42,6 +42,10 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.ERROR(f'Файл {file} не найден.')
             )
+        except (ValueError, IntegrityError) as error:
+            self.stdout.write(
+                self.style.ERROR(f'Ошибка данных в файле {file}. {error}.')
+            )
         else:
             self.stdout.write(
                 self.style.SUCCESS('Все данные успешно загружены.')
