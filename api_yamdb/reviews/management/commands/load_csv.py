@@ -4,14 +4,17 @@ from django.core.management import BaseCommand
 from django.db import IntegrityError
 
 from api_yamdb.settings import CSV_DIR
-from reviews.models import Category, Genre, Title
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 MODELS: dict = {
     Category: 'category.csv',
     Genre: 'genre.csv',
+    User: 'users.csv',
     Title: 'titles.csv',
-    User: 'users.csv'
+    Title.genre.through: 'genre_title.csv',
+    Review: 'review.csv',
+    Comment: 'comments.csv'
 }
 
 
@@ -34,13 +37,10 @@ class Command(BaseCommand):
                 ) as f:
                     reader = csv.DictReader(f)
                     model.objects.bulk_create(model(**data) for data in reader)
+                    print(f'{model} - {file} - {reader}')
         except FileNotFoundError:
             self.stdout.write(
                 self.style.ERROR(f'Файл {file} не найден.')
-            )
-        except (ValueError, IntegrityError) as error:
-            self.stdout.write(
-                self.style.ERROR(f'Ошибка данных в файле {file}. {error}.')
             )
         else:
             self.stdout.write(
