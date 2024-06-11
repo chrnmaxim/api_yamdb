@@ -37,7 +37,6 @@ class Command(BaseCommand):
                 ) as f:
                     reader = csv.DictReader(f)
                     model.objects.bulk_create(model(**data) for data in reader)
-                    print(f'{model} - {file} - {reader}')
         except FileNotFoundError:
             self.stdout.write(
                 self.style.ERROR(f'Файл {file} не найден.')
