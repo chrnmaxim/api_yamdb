@@ -15,7 +15,7 @@ from reviews.models import Category, Genre, Title, Review
 from users.models import User
 
 from .mixins import GetCreateDeleteMixin
-from api.permissions import (IsAdmin,)
+from .permissions import (IsAdmin, IsAdminOrOwnerOrReadOnly)
 from .serializers import (
     CategorySerializer, GenreSerializer,
     TitleSerializer, UserCreateSerializer,
@@ -57,8 +57,8 @@ class TitleViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     """ViewSet for reviews."""
     serializer_class = ReviewSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    # Добавить кастомные ограничения для модераторов и админов
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsAdminOrOwnerOrReadOnly,)
 
     def get_title(self):
         """
@@ -78,16 +78,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
             title=title
         )
 
-    def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
-        # Добавить разрешение на редактирование для модераторов и админов
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     """ViewSet for comments."""
     serializer_class = CommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    # Добавить кастомные ограничения для модераторов и админов
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsAdminOrOwnerOrReadOnly,)
 
     def get_review(self):
         """
@@ -106,10 +102,6 @@ class CommentViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             review=review
         )
-
-    def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
-        # Добавить разрешение на редактирование для модераторов и админов
 
 
 class UserCreateViewSet(mixins.CreateModelMixin,

@@ -139,7 +139,7 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 CHARS_LIMIT: int = 30
 
-MAX_LENGTH: int = 256
+MAX_LENGTH: int = 150
 
 LIMIT_EMAIL: int = 254
 
