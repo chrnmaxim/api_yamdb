@@ -4,8 +4,10 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     CategoryViewSet, GenreViewSet,
     TitleViewSet, UserCreateViewSet,
-    UserReceiveTokenViewSet, UserViewSet
+    UserReceiveTokenViewSet, UserViewSet,
+    ReviewViewSet, CommentViewSet
 )
+
 
 API_VER: str = 'v1'
 
@@ -14,6 +16,16 @@ router_v1.register('users', UserViewSet, basename='users')
 router_v1.register('categories', CategoryViewSet)
 router_v1.register('genres', GenreViewSet)
 router_v1.register('titles', TitleViewSet)
+router_v1.register(
+    r'titles/(?P<title_id>\d+)/reviews',
+    ReviewViewSet,
+    basename='reviews'
+)
+router_v1.register(
+    r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
+    CommentViewSet,
+    basename='comments'
+)
 
 auth_urls = [
     path(

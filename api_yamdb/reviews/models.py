@@ -1,6 +1,10 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from api_yamdb.settings import CHARS_LIMIT, MAX_LENGTH
+
+User = get_user_model()  # Временная замена кастомного класса User
 
 
 class Category(models.Model):
@@ -83,3 +87,66 @@ class Title(models.Model):
     def __str__(self):
         """Displays Title name in admin panel."""
         return self.name[:CHARS_LIMIT]
+
+
+class Review(models.Model):
+    """Model for title reviews."""
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name='Произведение'
+    )
+    text = models.TextField('Текст')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name='Автор'
+    )
+    score = models.IntegerField(
+        'Оценка',
+        validators=[
+            MaxValueValidator(10, message='Оценка должна быть не выше 10'),
+            MinValueValidator(1, message='Оценка должна быть не ниже 1')
+        ]
+    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        ordering = ['pub_date']
+        verbose_name = 'отзыв'
+        verbose_name_plural = 'Отзывы'
+        constraints = [
+            models.UniqueConstraint(fields=['author', 'title'],
+                                    name='unique_review')
+        ]
+
+    def __str__(self):
+        return self.text[:CHARS_LIMIT]
+
+
+class Comment(models.Model):
+    """Model for review comments."""
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Отзыв'
+    )
+    text = models.TextField('Текст')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Автор'
+    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        ordering = ['pub_date']
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return self.text[:CHARS_LIMIT]

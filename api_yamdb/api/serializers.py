@@ -1,10 +1,8 @@
 from rest_framework import serializers
 
-
 from api_yamdb.settings import MAX_LENGTH
-from reviews.models import Category, Genre, Title
+from reviews.models import Category, Genre, Title, Review, Comment
 from users.models import User
-
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -33,7 +31,7 @@ class TitleSerializer(serializers.ModelSerializer):
     """Serializer for titles."""
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
-    # rating = serializers.IntegerField()
+    rating = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Title
@@ -41,11 +39,38 @@ class TitleSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'year',
-            # 'rating',
+            'rating',
             'description',
             'genre',
             'category'
         )
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    """Serializer for reviews."""
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username'
+    )
+    score = serializers.IntegerField()
+    title = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Serializer for comments."""
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username'
+    )
+    review = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
