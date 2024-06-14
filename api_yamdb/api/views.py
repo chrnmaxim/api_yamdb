@@ -123,19 +123,17 @@ class UserCreateViewSet(mixins.CreateModelMixin,
         email = request.data.get('email')
         if User.objects.filter(username=username, email=email).exists():
             user = User.objects.get(username=username, email=email)
-            send_confirmation_code(email, user)
+            confirmation_code = default_token_generator.make_token(user)
+            send_confirmation_code(user.email, confirmation_code)
             serializer = UserCreateSerializer(data=request.data)
             serializer.is_valid()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         serializer = UserCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user, _ = User.objects.get_or_create(**serializer.validated_data)
+        user = User.objects.create(**serializer.validated_data)
         confirmation_code = default_token_generator.make_token(user)
-        send_confirmation_code(
-            email=user.email,
-            confirmation_code=confirmation_code
-        )
+        send_confirmation_code(user.email, confirmation_code)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
