@@ -1,9 +1,23 @@
 from rest_framework import permissions
 
 
+class AnonReadOnly(permissions.BasePermission):
+    """
+    Safe methods.
+
+    For anonymous users.
+    """
+
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS
+
+
 class IsAdminOrReadOnly(permissions.BasePermission):
-    """Для аутентифицированных пользователей имеющих статус администратора или
-    персонала иначе только просмотр."""
+    """
+    Safe methods.
+
+    For authenticated users with admin.
+    """
 
     def has_permission(self, request, view):
         return (
@@ -14,8 +28,11 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 
 class IsAdminOrOwnerOrReadOnly(permissions.BasePermission):
-    """Для аутентифицированных пользователей имеющих статус администратора или
-    автора иначе только просмотр."""
+    """
+    Safe methods.
+
+    For authenticated users with admin rights or object's owners.
+    """
 
     def has_permission(self, request, view):
         return (
@@ -33,8 +50,11 @@ class IsAdminOrOwnerOrReadOnly(permissions.BasePermission):
 
 
 class IsAdmin(permissions.BasePermission):
-    """Только для аутентифицированных пользователей имеющих статус
-    администратора или суперюзера."""
+    """
+    All methods methods.
+
+    For authenticated users with admin rights.
+    """
 
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_admin

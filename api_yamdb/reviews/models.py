@@ -1,10 +1,8 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth import get_user_model
 from django.db import models
 
 from api_yamdb.settings import CHARS_LIMIT, MAX_LENGTH
-
-User = get_user_model()  # Временная замена кастомного класса User
+from users.models import User
 
 
 class Category(models.Model):
@@ -107,13 +105,17 @@ class Review(models.Model):
     score = models.IntegerField(
         'Оценка',
         validators=[
-            MaxValueValidator(10, message='Оценка должна быть не выше 10'),
-            MinValueValidator(1, message='Оценка должна быть не ниже 1')
+            MaxValueValidator(10, message='Оценка не может быть выше 10.'),
+            MinValueValidator(1, message='Оценка не может быть ниже 1.')
         ]
     )
-    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+    pub_date = models.DateTimeField(
+        'Дата публикации',
+        auto_now_add=True
+    )
 
     class Meta:
+        """Inner Meta class of Review model."""
         ordering = ['pub_date']
         verbose_name = 'отзыв'
         verbose_name_plural = 'Отзывы'
@@ -123,6 +125,7 @@ class Review(models.Model):
         ]
 
     def __str__(self):
+        """Displays Review text in admin panel."""
         return self.text[:CHARS_LIMIT]
 
 
@@ -141,12 +144,17 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Автор'
     )
-    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+    pub_date = models.DateTimeField(
+        'Дата публикации',
+        auto_now_add=True
+    )
 
     class Meta:
+        """Inner Meta class of Comment model."""
         ordering = ['pub_date']
         verbose_name = 'комментарий'
         verbose_name_plural = 'Комментарии'
 
     def __str__(self):
+        """Displays Comment text in admin panel."""
         return self.text[:CHARS_LIMIT]

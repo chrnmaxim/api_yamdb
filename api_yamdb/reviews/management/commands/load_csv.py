@@ -2,9 +2,9 @@ import csv
 
 from django.core.management import BaseCommand
 from django.db import IntegrityError
+from reviews.models import Category, Comment, Genre, Review, Title
 
 from api_yamdb.settings import CSV_DIR
-from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 MODELS: dict = {

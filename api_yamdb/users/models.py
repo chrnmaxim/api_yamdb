@@ -1,65 +1,67 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
 from django.core.validators import RegexValidator
+from django.db import models
 
-from api_yamdb.settings import CHARS_LIMIT, MAX_LENGTH, LIMIT_EMAIL
+from api_yamdb.settings import CHARS_LIMIT, LIMIT_EMAIL, MAX_LENGTH
 
 
 class User(AbstractUser):
-    """Класс пользователей."""
+    """Custom user model."""
 
-    ADMIN = "admin"
-    MODERATOR = "moderator"
-    USER = "user"
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+    USER = 'user'
     ROLE_CHOICES = (
-        (USER, "Пользователь"),
-        (MODERATOR, "Модератор"),
-        (ADMIN, "Администратор"),
+        (USER, 'Пользователь'),
+        (MODERATOR, 'Модератор'),
+        (ADMIN, 'Администратор'),
     )
     username = models.CharField(
-        "Имя пользователя",
+        'Имя пользователя',
         max_length=MAX_LENGTH,
         unique=True,
         validators=[RegexValidator(
-            regex=r"^[\w.@+-]+$",
-            message="Имя пользователя содержит недопустимый символ"
+            regex=r'^[\w.@+-]+$',
+            message='Имя пользователя содержит недопустимый символ.'
         )],
         error_messages={
-            "unique": "Пользователь с таким именем уже существует!",
+            'unique': 'Пользователь с данным username уже существует.',
         },
     )
     email = models.EmailField(
-        "email",
+        'email',
         max_length=LIMIT_EMAIL,
         unique=True
     )
     role = models.CharField(
-        "Роль",
+        'Роль',
         max_length=max(len(role) for role, _ in ROLE_CHOICES),
         choices=ROLE_CHOICES,
         default=USER,
     )
     bio = models.TextField(
-        "Биография",
+        'Биография',
         blank=True
     )
     first_name = models.CharField(
-        "Имя",
+        'Имя',
         max_length=MAX_LENGTH,
         blank=True
     )
     last_name = models.CharField(
-        "Фамилия",
+        'Фамилия',
         max_length=MAX_LENGTH,
         blank=True
     )
 
     class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
-        ordering = ("id",)
+        """Inner Meta class of custom User model."""
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+        ordering = ('id',)
 
     def __str__(self):
+        """Displays username in admin panel."""
         return self.username[:CHARS_LIMIT]
 
     @property
