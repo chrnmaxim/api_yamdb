@@ -1,10 +1,10 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-
-from api_yamdb.settings import MAX_LENGTH
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -82,16 +82,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username'
     )
-
-    def validate_score(self, value):
-        if 0 > value > 10:
-            raise serializers.ValidationError('Оценка может быть от 1 до 10.')
-        return value
+    score = serializers.IntegerField(
+        max_value=settings.MAX_SCORE,
+        min_value=settings.MIN_SCORE
+    )
 
     def validate(self, data):
         request = self.context['request']
         author = request.user
-        title_id = self.context.get('view').kwargs.get('title_id')
+        title_id = self.context['view'].kwargs.get('title_id')
         title = get_object_or_404(Title, pk=title_id)
         if (
             request.method == 'POST'
@@ -109,6 +108,12 @@ class ReviewSerializer(serializers.ModelSerializer):
             'score',
             'pub_date'
         )
+        error_messages = {
+            'score': {
+                'max_value': f'Оценка не может быть выше {settings.MAX_SCORE}',
+                'min_value': f'Оценка не может быть ниже {settings.MIN_SCORE}'
+            }
+        }
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -146,11 +151,11 @@ class UserRecieveTokenSerializer(serializers.Serializer):
 
     username = serializers.RegexField(
         regex=r'^[\w.@+-]+$',
-        max_length=MAX_LENGTH,
+        max_length=settings.MAX_LENGTH,
         required=True
     )
     confirmation_code = serializers.CharField(
-        max_length=MAX_LENGTH,
+        max_length=settings.MAX_LENGTH,
         required=True
     )
 

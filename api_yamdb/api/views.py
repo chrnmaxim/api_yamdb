@@ -73,8 +73,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_title(self):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        return title
+        return get_object_or_404(Title, id=self.kwargs.get('title_id'))
 
     def get_queryset(self):
         title = self.get_title()
@@ -96,12 +95,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_review(self):
-        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
-        return review
+        """Gets specific review."""
+        # По 'title_id' не получится получить один объект,
+        # ведь связь один ко многим.
+        return get_object_or_404(Review, id=self.kwargs.get('review_id'))
 
     def get_queryset(self):
-        review = self.get_review()
-        return review.comments.all()
+        """Gets all comments to the specific review."""
+        return self.get_review().comments.all()
 
     def perform_create(self, serializer):
         review = self.get_review()
@@ -184,7 +185,7 @@ class UserViewSet(mixins.ListModelMixin,
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             user.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         serializer = UserSerializer(user)

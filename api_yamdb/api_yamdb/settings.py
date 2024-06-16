@@ -143,4 +143,8 @@ MAX_LENGTH: int = 150
 
 LIMIT_EMAIL: int = 254
 
+MIN_SCORE: int = 1
+
+MAX_SCORE: int = 10
+
 EMAIL_YAMDB: str = 'registration_YaMDb@mail.com'
