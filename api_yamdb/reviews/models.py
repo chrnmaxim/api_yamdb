@@ -1,7 +1,8 @@
+from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from api_yamdb.settings import CHARS_LIMIT, MAX_LENGTH
+from reviews.validators import validate_year
 from users.models import User
 
 
@@ -9,7 +10,7 @@ class Category(models.Model):
     """Model for categories."""
     name = models.CharField(
         'Название',
-        max_length=MAX_LENGTH
+        max_length=settings.MAX_LENGTH
     )
     slug = models.SlugField(
         'Идентификатор',
@@ -20,17 +21,18 @@ class Category(models.Model):
         """Inner Meta class of Category model."""
         verbose_name = 'категория'
         verbose_name_plural = 'Категории'
+        ordering = ('id',)
 
     def __str__(self):
         """Displays Category name in admin panel."""
-        return self.name[:CHARS_LIMIT]
+        return self.name[:settings.CHARS_LIMIT]
 
 
 class Genre(models.Model):
     """Model for genres."""
     name = models.CharField(
         'Название',
-        max_length=MAX_LENGTH
+        max_length=settings.MAX_LENGTH
     )
     slug = models.SlugField(
         'Идентификатор',
@@ -41,24 +43,27 @@ class Genre(models.Model):
         """Inner Meta class of Genre model."""
         verbose_name = 'жанр'
         verbose_name_plural = 'Жанры'
+        ordering = ('id',)
 
     def __str__(self):
         """Displays Genre name in admin panel."""
-        return self.name[:CHARS_LIMIT]
+        return self.name[:settings.CHARS_LIMIT]
 
 
 class Title(models.Model):
     """Model for titles."""
     name = models.CharField(
         'Название',
-        max_length=MAX_LENGTH
+        max_length=settings.MAX_LENGTH
     )
-    year = models.IntegerField(
-        'Год'
+    year = models.PositiveSmallIntegerField(
+        'Год',
+        db_index=True,
+        validators=(validate_year,)
     )
     description = models.TextField(
         'Описание',
-        max_length=MAX_LENGTH,
+        max_length=settings.MAX_LENGTH,
         blank=True,
         null=True
     )
@@ -84,7 +89,7 @@ class Title(models.Model):
 
     def __str__(self):
         """Displays Title name in admin panel."""
-        return self.name[:CHARS_LIMIT]
+        return self.name[:settings.CHARS_LIMIT]
 
 
 class Review(models.Model):
@@ -102,11 +107,17 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='Автор'
     )
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         'Оценка',
         validators=[
-            MaxValueValidator(10, message='Оценка не может быть выше 10.'),
-            MinValueValidator(1, message='Оценка не может быть ниже 1.')
+            MaxValueValidator(
+                settings.MAX_SCORE,
+                message=f'Оценка не может быть выше {settings.MAX_SCORE}.'
+            ),
+            MinValueValidator(
+                settings.MIN_SCORE,
+                message=f'Оценка не может быть ниже {settings.MIN_SCORE}.'
+            )
         ]
     )
     pub_date = models.DateTimeField(
@@ -116,7 +127,7 @@ class Review(models.Model):
 
     class Meta:
         """Inner Meta class of Review model."""
-        ordering = ['pub_date']
+        ordering = ['-pub_date']
         verbose_name = 'отзыв'
         verbose_name_plural = 'Отзывы'
         constraints = [
@@ -126,7 +137,7 @@ class Review(models.Model):
 
     def __str__(self):
         """Displays Review text in admin panel."""
-        return self.text[:CHARS_LIMIT]
+        return self.text[:settings.CHARS_LIMIT]
 
 
 class Comment(models.Model):
@@ -151,10 +162,10 @@ class Comment(models.Model):
 
     class Meta:
         """Inner Meta class of Comment model."""
-        ordering = ['pub_date']
+        ordering = ['-pub_date']
         verbose_name = 'комментарий'
         verbose_name_plural = 'Комментарии'
 
     def __str__(self):
         """Displays Comment text in admin panel."""
-        return self.text[:CHARS_LIMIT]
+        return self.text[:settings.CHARS_LIMIT]
