@@ -1,8 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
-
-from api_yamdb.settings import CHARS_LIMIT, LIMIT_EMAIL, MAX_LENGTH
 
 
 class User(AbstractUser):
@@ -18,7 +17,7 @@ class User(AbstractUser):
     )
     username = models.CharField(
         'Имя пользователя',
-        max_length=MAX_LENGTH,
+        max_length=settings.MAX_LENGTH,
         unique=True,
         validators=[RegexValidator(
             regex=r'^[\w.@+-]+$',
@@ -30,7 +29,7 @@ class User(AbstractUser):
     )
     email = models.EmailField(
         'email',
-        max_length=LIMIT_EMAIL,
+        max_length=settings.LIMIT_EMAIL,
         unique=True
     )
     role = models.CharField(
@@ -45,12 +44,12 @@ class User(AbstractUser):
     )
     first_name = models.CharField(
         'Имя',
-        max_length=MAX_LENGTH,
+        max_length=settings.MAX_LENGTH,
         blank=True
     )
     last_name = models.CharField(
         'Фамилия',
-        max_length=MAX_LENGTH,
+        max_length=settings.MAX_LENGTH,
         blank=True
     )
 
@@ -62,7 +61,7 @@ class User(AbstractUser):
 
     def __str__(self):
         """Displays username in admin panel."""
-        return self.username[:CHARS_LIMIT]
+        return self.username[:settings.CHARS_LIMIT]
 
     @property
     def is_moderator(self):
