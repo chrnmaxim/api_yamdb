@@ -96,9 +96,11 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_review(self):
         """Gets specific review."""
-        # По 'title_id' не получится получить один объект,
-        # ведь связь один ко многим.
-        return get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        return get_object_or_404(
+            Review,
+            id=self.kwargs.get('review_id'),
+            title_id=self.kwargs.get('title_id')
+        )
 
     def get_queryset(self):
         """Gets all comments to the specific review."""
